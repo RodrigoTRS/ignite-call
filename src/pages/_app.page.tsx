@@ -5,7 +5,7 @@ import { SessionProvider } from 'next-auth/react'
 globalStyles()
 
 export default function App({
-  Component,  
+  Component,
   pageProps: { session, ...pageProps },
 }: AppProps) {
   return (
