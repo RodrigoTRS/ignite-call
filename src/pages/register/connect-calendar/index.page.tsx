@@ -6,7 +6,7 @@ import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
-export default function Register() {
+export default function ConnectionCalendar() {
   const session = useSession()
   const router = useRouter()
 
