@@ -3,7 +3,10 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google'
 
-export function buildNextAuthOptions(req: NextApiRequest, res: NextApiResponse): NextAuthOptions {
+export function buildNextAuthOptions(
+  req: NextApiRequest,
+  res: NextApiResponse,
+): NextAuthOptions {
   return {
     adapter: PrismaAdapter(req, res),
     providers: [
@@ -22,9 +25,9 @@ export function buildNextAuthOptions(req: NextApiRequest, res: NextApiResponse):
             name: profile.name,
             username: '',
             email: profile.email,
-            avatar_url: profile.picture
+            avatar_url: profile.picture,
           }
-        }
+        },
       }),
     ],
     callbacks: {
@@ -39,9 +42,9 @@ export function buildNextAuthOptions(req: NextApiRequest, res: NextApiResponse):
       async session({ session, user }) {
         return {
           ...session,
-          user
+          user,
         }
-      }
+      },
     },
   }
 }
