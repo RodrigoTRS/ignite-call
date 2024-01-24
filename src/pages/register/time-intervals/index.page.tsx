@@ -7,9 +7,12 @@ import {
   Text,
   TextInput,
 } from '@ignite-ui/react'
+import { useRouter } from 'next/router'
 import { ArrowRight } from 'phosphor-react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { api } from '../../../lib/axios'
+import { convertTimeStringToMinutes } from '../../../utils/convert-time-string-to-minutes'
 import { getWeekDays } from '../../../utils/get-week-days'
 import { Container, Header } from '../styles'
 
@@ -21,8 +24,6 @@ import {
   IntervalInputs,
   IntervalItem,
 } from './styles'
-import { convertTimeStringToMinutes } from '@/utils/convert-time-string-to-minutes'
-import { api } from '@/lib/axios'
 
 const timeIntervalsFormSchema = z.object({
   intervals: z
@@ -50,13 +51,14 @@ const timeIntervalsFormSchema = z.object({
     })
     .refine(
       (intervals) => {
-        return intervals.every((interval) => {
-          return interval.endTimeInMinutes - interval.startTimeInMinutes >= 60
-        })
+        return intervals.every(
+          (interval) =>
+            interval.endTimeInMinutes - 60 >= interval.startTimeInMinutes,
+        )
       },
       {
         message:
-          'O horário de término deve ser pelo menos 1 hora distante do início',
+          'O horário de término deve ser pelo menos 1h distante do início.',
       },
     ),
 })
@@ -86,6 +88,8 @@ export default function TimeIntervals() {
     },
   })
 
+  const router = useRouter()
+
   const weekDays = getWeekDays()
 
   const { fields } = useFieldArray({
@@ -95,11 +99,14 @@ export default function TimeIntervals() {
 
   const intervals = watch('intervals')
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function handleSetTimeIntervals(data: any) {
     const { intervals } = data as TimeIntervalsFormOutput
 
-    await api.post('/users/time-intervals', intervals)
+    await api.post('/users/time-intervals', {
+      intervals,
+    })
+
+    await router.push('/register/update-profile')
   }
 
   return (
@@ -142,16 +149,16 @@ export default function TimeIntervals() {
                     type="time"
                     step={60}
                     disabled={intervals[index].enabled === false}
-                    {...register(`intervals.${index}.startTime`)}
                     crossOrigin=""
+                    {...register(`intervals.${index}.startTime`)}
                   />
                   <TextInput
                     size="sm"
                     type="time"
                     step={60}
                     disabled={intervals[index].enabled === false}
-                    {...register(`intervals.${index}.endTime`)}
                     crossOrigin=""
+                    {...register(`intervals.${index}.endTime`)}
                   />
                 </IntervalInputs>
               </IntervalItem>
@@ -160,7 +167,7 @@ export default function TimeIntervals() {
         </IntervalsContainer>
 
         {errors.intervals && (
-          <FormError size="sm">{errors.intervals.root?.message}</FormError>
+          <FormError size="sm">{errors.intervals.message}</FormError>
         )}
 
         <Button type="submit" disabled={isSubmitting}>
