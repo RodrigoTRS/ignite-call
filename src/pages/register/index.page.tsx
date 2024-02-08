@@ -1,7 +1,7 @@
 import { Heading, MultiStep, Text, TextInput, Button } from '@ignite-ui/react'
 import { Container, Form, FormError, Header } from './styles'
 import { ArrowRight } from 'phosphor-react'
-import { set, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/router'
